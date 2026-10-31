@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Telemetria</title>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; }
+    pre  { background: #111; color: #0f0; padding: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Telemetria (ESP32 / Wokwi)</h1>
+  <p>Atualizado em: <code id="quando">-</code></p>
+  <pre id="out">aguardando dados...</pre>
+
+<script>
+  // Quem fizer o front usa só isto: GET /api/telemetria
+  //   -> { ultima: {...}, historico: [ {...}, ... ] }   (mais recente primeiro)
+  async function atualizar() {
+    try {
+      const r = await fetch("/api/telemetria?limit=20");
+      const { ultima, historico } = await r.json();
+      if (ultima) {
+        document.getElementById("out").textContent = JSON.stringify(ultima, null, 2);
+        document.getElementById("quando").textContent = ultima.recebido_em;
+      }
+      window.dispatchEvent(new CustomEvent("telemetria", { detail: { ultima, historico } }));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  atualizar();
+  setInterval(atualizar, 2000);
+</script>
+</body>
+</html>
