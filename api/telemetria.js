@@ -81,7 +81,7 @@ export default async function handler(req, res) {
         distancia: b.distancia,
         inclinacao_x: b.inclinacao_x,
         temperatura: b.temperatura,
-        recebido_em: new Date().toISOString(),
+        recebido_em: new Date().toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" }).replace(" ", "T") + "-03:00",
       };
       await salvar(registro);
       return res.status(201).json({ ok: true });
